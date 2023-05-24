@@ -49,13 +49,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         for i in 0..tango_dataview::game::bn4::NUM_CHIPS {
             abd_mut.set_chip_use_count(i, 0);
         }
+        abd_mut.clear_materialized();
     }
 
-    let shift = save.shift();
     let mut raw = save.as_raw_wram().to_vec();
-
-    // Clear materialized ABD.
-    raw[shift + 0x5064..shift + 0x5064 + 42 * 2].copy_from_slice(&[0xff; 42 * 2]);
 
     raw[tango_dataview::game::bn4::save::MASK_OFFSET
         ..tango_dataview::game::bn4::save::MASK_OFFSET + 4]
