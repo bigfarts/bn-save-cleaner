@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -euxo pipefail
 cargo build --release --bin fixbn4
 target/release/fixbn4 data/ロックマンエグゼ４トーナメントブルームーン/ROCK_EXE4_BM_HP1000_Light.sav ../tango/tango/src/game/bn4/save/light_hp_1000_bm_jp.raw
 target/release/fixbn4 data/ロックマンエグゼ４トーナメントブルームーン/ROCK_EXE4_BM_HP999_Light.sav ../tango/tango/src/game/bn4/save/light_hp_999_bm_jp.raw
