@@ -17,14 +17,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut raw = save.as_raw_wram().to_vec();
 
-    raw[tango_dataview::game::bn1::save::CHECKSUM_OFFSET
-        ..tango_dataview::game::bn1::save::CHECKSUM_OFFSET + 4]
-        .copy_from_slice(b"\0\0\0\0");
+    raw[tango_dataview::game::bn1::save::CHECKSUM_OFFSET..][..4].copy_from_slice(b"\0\0\0\0");
 
     if args.us {
         // Rename the save.
-        raw[tango_dataview::game::bn1::save::GAME_NAME_OFFSET
-            ..tango_dataview::game::bn1::save::GAME_NAME_OFFSET + 20]
+        raw[tango_dataview::game::bn1::save::GAME_NAME_OFFSET..][..20]
             .copy_from_slice(b"ROCKMAN EXE 20010727");
     }
 

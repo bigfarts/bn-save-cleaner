@@ -54,13 +54,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut raw = save.as_raw_wram().to_vec();
 
-    raw[tango_dataview::game::bn4::save::MASK_OFFSET
-        ..tango_dataview::game::bn4::save::MASK_OFFSET + 4]
-        .copy_from_slice(b"\0\0\0\0");
-
-    raw[tango_dataview::game::bn4::save::CHECKSUM_OFFSET
-        ..tango_dataview::game::bn4::save::CHECKSUM_OFFSET + 4]
-        .copy_from_slice(b"\0\0\0\0");
+    raw[tango_dataview::game::bn4::save::MASK_OFFSET..][..4].copy_from_slice(b"\0\0\0\0");
+    raw[tango_dataview::game::bn4::save::CHECKSUM_OFFSET..][..4].copy_from_slice(b"\0\0\0\0");
 
     if args.us {
         // Duo

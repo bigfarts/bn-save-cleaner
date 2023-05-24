@@ -47,22 +47,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     .to_vec();
 
-    raw[tango_dataview::game::bn6::save::MASK_OFFSET
-        ..tango_dataview::game::bn6::save::MASK_OFFSET + 4]
-        .copy_from_slice(b"\0\0\0\0");
-
-    raw[tango_dataview::game::bn6::save::CHECKSUM_OFFSET
-        ..tango_dataview::game::bn6::save::CHECKSUM_OFFSET + 4]
-        .copy_from_slice(b"\0\0\0\0");
+    raw[tango_dataview::game::bn6::save::MASK_OFFSET..][..4].copy_from_slice(b"\0\0\0\0");
+    raw[tango_dataview::game::bn6::save::CHECKSUM_OFFSET..][..4].copy_from_slice(b"\0\0\0\0");
 
     if args.us {
         // Rename the save.
-        raw[tango_dataview::game::bn6::save::GAME_NAME_OFFSET
-            ..tango_dataview::game::bn6::save::GAME_NAME_OFFSET + 20]
-            .copy_from_slice(match variant {
+        raw[tango_dataview::game::bn6::save::GAME_NAME_OFFSET..][..20].copy_from_slice(
+            match variant {
                 tango_dataview::game::bn6::save::Variant::Gregar => b"REXE6 G 20060110a US",
                 tango_dataview::game::bn6::save::Variant::Falzar => b"REXE6 F 20060110a US",
-            });
+            },
+        );
 
         // Rename folder names.
         for (i, name) in ["LanFldr", "ExpoFldr", "GiftFldr"].into_iter().enumerate() {
