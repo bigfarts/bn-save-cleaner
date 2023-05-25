@@ -479,7 +479,7 @@ dependencies = [
 
 [[package]]
 name = "tango-dataview"
-version = "4.0.50"
+version = "4.0.51"
 dependencies = [
  "bytemuck",
  "byteorder",

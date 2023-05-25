@@ -2,6 +2,25 @@ use byteorder::WriteBytesExt;
 use clap::Parser;
 use tango_dataview::save::Save;
 
+fn convert_string(s: &str, n: usize) -> Vec<u8> {
+    s.chars()
+        .into_iter()
+        .map(|c| {
+            if c == '\n' {
+                return 0xe9;
+            }
+
+            tango_dataview::game::bn6::rom::EN_CHARSET
+                .iter()
+                .position(|c2| c.to_string() == *c2)
+                .unwrap() as u8
+        })
+        .chain([0xe6])
+        .chain(std::iter::repeat(0))
+        .take(n)
+        .collect::<Vec<_>>()
+}
+
 #[derive(clap::Parser)]
 struct Args {
     #[arg(long, default_value = "false")]
@@ -58,6 +77,71 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 tango_dataview::game::bn6::save::Variant::Falzar => b"REXE6 F 20060110a US",
             },
         );
+
+        // Double Beast
+        {
+            let offset = tango_dataview::game::bn6::save::EREADER_NAME_OFFSET
+                + tango_dataview::game::bn6::save::EREADER_NAME_SIZE * 0;
+            raw[offset..][..tango_dataview::game::bn6::save::EREADER_NAME_SIZE - 2]
+                .copy_from_slice(&convert_string(
+                    "DblBeast",
+                    tango_dataview::game::bn6::save::EREADER_NAME_SIZE - 2,
+                ));
+        }
+        {
+            let offset = tango_dataview::game::bn6::save::EREADER_DESCRIPTION_OFFSET
+                + tango_dataview::game::bn6::save::EREADER_DESCRIPTION_SIZE * 0;
+            raw[offset..][..tango_dataview::game::bn6::save::EREADER_DESCRIPTION_SIZE - 2]
+                .copy_from_slice(&convert_string(
+                    "Ferocious\nbeast\npower!",
+                    tango_dataview::game::bn6::save::EREADER_DESCRIPTION_SIZE - 2,
+                ));
+        }
+
+        match variant {
+            tango_dataview::game::bn6::save::Variant::Gregar => {
+                // Gregar
+                {
+                    let offset = tango_dataview::game::bn6::save::EREADER_NAME_OFFSET
+                        + tango_dataview::game::bn6::save::EREADER_NAME_SIZE * 1;
+                    raw[offset..][..tango_dataview::game::bn6::save::EREADER_NAME_SIZE - 2]
+                        .copy_from_slice(&convert_string(
+                            "Gregar",
+                            tango_dataview::game::bn6::save::EREADER_NAME_SIZE - 2,
+                        ));
+                }
+                {
+                    let offset = tango_dataview::game::bn6::save::EREADER_DESCRIPTION_OFFSET
+                        + tango_dataview::game::bn6::save::EREADER_DESCRIPTION_SIZE * 1;
+                    raw[offset..][..tango_dataview::game::bn6::save::EREADER_DESCRIPTION_SIZE - 2]
+                        .copy_from_slice(&convert_string(
+                            "Gregar's\nbreath\nattack!",
+                            tango_dataview::game::bn6::save::EREADER_DESCRIPTION_SIZE - 2,
+                        ));
+                }
+            }
+            tango_dataview::game::bn6::save::Variant::Falzar => {
+                // Falzar
+                {
+                    let offset = tango_dataview::game::bn6::save::EREADER_NAME_OFFSET
+                        + tango_dataview::game::bn6::save::EREADER_NAME_SIZE * 1;
+                    raw[offset..][..tango_dataview::game::bn6::save::EREADER_NAME_SIZE - 2]
+                        .copy_from_slice(&convert_string(
+                            "Falzar",
+                            tango_dataview::game::bn6::save::EREADER_NAME_SIZE - 2,
+                        ));
+                }
+                {
+                    let offset = tango_dataview::game::bn6::save::EREADER_DESCRIPTION_OFFSET
+                        + tango_dataview::game::bn6::save::EREADER_DESCRIPTION_SIZE * 1;
+                    raw[offset..][..tango_dataview::game::bn6::save::EREADER_DESCRIPTION_SIZE - 2]
+                        .copy_from_slice(&convert_string(
+                            "Falzar's\nruinous\ntornado!",
+                            tango_dataview::game::bn6::save::EREADER_DESCRIPTION_SIZE - 2,
+                        ));
+                }
+            }
+        }
 
         // Rename folder names.
         for (i, name) in ["LanFldr", "ExpoFldr", "GiftFldr"].into_iter().enumerate() {
