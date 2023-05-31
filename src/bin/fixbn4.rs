@@ -51,20 +51,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         abd_mut.clear_materialized();
     }
-    let shift = save.shift();
 
     let mut raw = save.as_raw_wram().to_vec();
 
     // Remove shift.
-    let region_start = 0x2130;
-    let region_size = 0x3cf0;
-    raw.copy_within(
-        shift + region_start..shift + region_start + region_size,
-        region_start,
-    );
-    for v in &mut raw[region_start + region_size..][..shift] {
-        *v = 0;
-    }
     raw[tango_dataview::game::bn4::save::SHIFT_OFFSET..][..4].copy_from_slice(b"\0\0\0\0");
     raw[tango_dataview::game::bn4::save::MASK_OFFSET..][..4].copy_from_slice(b"\0\0\0\0");
     raw[tango_dataview::game::bn4::save::CHECKSUM_OFFSET..][..4].copy_from_slice(b"\0\0\0\0");
