@@ -54,6 +54,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut raw = save.as_raw_wram().to_vec();
 
+    raw[0] = 1; // Set a non-zero byte here to avoid overlapping JP and US BN4 saves.
     raw[tango_dataview::game::bn4::save::MASK_OFFSET..][..4].copy_from_slice(b"\0\0\0\0");
     raw[tango_dataview::game::bn4::save::CHECKSUM_OFFSET..][..4].copy_from_slice(b"\0\0\0\0");
 
